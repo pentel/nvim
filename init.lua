@@ -50,35 +50,35 @@ require("mason").setup()
 local cmp = require'cmp'
 
 cmp.setup({
-  snippet = {
-    -- REQUIRED - you must specify a snippet engine
-    expand = function(args)
-      vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-      -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-      -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-      -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-    end,
-  },
-  window = {
-    -- completion = cmp.config.window.bordered(),
-    -- documentation = cmp.config.window.bordered(),
-  },
-  mapping = cmp.mapping.preset.insert({
-    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<C-e>'] = cmp.mapping.abort(),
-    ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-  }),
-  sources = cmp.config.sources({
-    { name = 'nvim_lsp' },
-    { name = 'vsnip' }, -- For vsnip users.
-    -- { name = 'luasnip' }, -- For luasnip users.
-    -- { name = 'ultisnips' }, -- For ultisnips users.
-    -- { name = 'snippy' }, -- For snippy users.
-  }, {
-    { name = 'buffer' },
-  })
+--   snippet = {
+--     -- REQUIRED - you must specify a snippet engine
+--     expand = function(args)
+--       vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+--       -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+--       -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+--       -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+--     end,
+--   },
+--   window = {
+--     -- completion = cmp.config.window.bordered(),
+--     -- documentation = cmp.config.window.bordered(),
+--   },
+--   mapping = cmp.mapping.preset.insert({
+--     ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+--     ['<C-f>'] = cmp.mapping.scroll_docs(4),
+--     ['<C-Space>'] = cmp.mapping.complete(),
+--     ['<C-e>'] = cmp.mapping.abort(),
+--     ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+--   }),
+--   sources = cmp.config.sources({
+--     { name = 'nvim_lsp' },
+--     { name = 'vsnip' }, -- For vsnip users.
+--     -- { name = 'luasnip' }, -- For luasnip users.
+--     -- { name = 'ultisnips' }, -- For ultisnips users.
+--     -- { name = 'snippy' }, -- For snippy users.
+--   }, {
+--     { name = 'buffer' },
+--   })
 })
 
 -- Set configuration for specific filetype.
@@ -135,10 +135,41 @@ require('telescope').setup{
 }
 require('telescope').load_extension('fzf')
 
-local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-vim.keymap.set('n', '<leader>fg', builtin.git_files, {})
-vim.keymap.set('n', '<leader>lg', builtin.live_grep, {})
-vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
-vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
 
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--                                 keymap
+-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.expandtab = true
+vim.bo.softtabstop = 2
+vim.opt.number = true
+vim.opt.ignorecase = true
+
+-- スペースキーを <leader> に設定する
+vim.api.nvim_set_keymap('n', '<Space>', '<Nop>', {noremap = true, silent = true})
+vim.g.mapleader = ' '
+-- スペースキーが押されたときに <leader> を実行する
+vim.api.nvim_set_keymap('n', '<Leader>', '<Space>', {noremap = true, silent = true})
+
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<leader>f', builtin.find_files, {})
+vim.keymap.set('n', '<leader>g', builtin.git_files, {})
+vim.keymap.set('n', '<leader>b', builtin.buffers, {})
+vim.keymap.set('n', '<leader>h', builtin.help_tags, {})
+vim.keymap.set('n', '<leader>l', builtin.live_grep, {})
+
+vim.api.nvim_set_keymap('n', '<F3>', ':NvimTreeToggle<CR>', {noremap = true, silent = true})
+
+-- function _G.fzf_files()
+--   vim.fn['fzf#run']({
+--     source = 'rg --files',
+--     sink = 'e',
+--     options = '--height 30% --prompt "Files> " --multi --preview "bat --color=always {}"'
+--   })
+-- end
+
+-- <leader>f にキーバインドを設定
+-- vim.api.nvim_set_keymap('n', '<leader>f', '<cmd>lua fzf_files()<CR>', {noremap = true, silent = true})
+-- vim.api.nvim_set_keymap('n', '<leader>f', ':lua fzf_files()<CR>', {noremap = true, silent = true})
