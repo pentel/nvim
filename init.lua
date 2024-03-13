@@ -34,7 +34,13 @@ require('packer').startup(function(use)
 
 	use {
 		'nvim-telescope/telescope.nvim', tag = '0.1.5',
-		requires = { {'nvim-lua/plenary.nvim'} }
+		requires = {
+      { "nvim-telescope/telescope-live-grep-args.nvim" },
+      {'nvim-lua/plenary.nvim'},
+    },
+    config = function()
+      require("telescope").load_extension("live_grep_args")
+    end
 	}
 
 	-- fzf
@@ -122,6 +128,9 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 require("nvim-tree").setup()
 
+local telescope = require("telescope")
+local lga_actions = require("telescope-live-grep-args.actions")
+
 require('telescope').setup{
 	extentions = {
 		fzf = {
@@ -129,9 +138,23 @@ require('telescope').setup{
 			override_generic_sorter = true, -- override the generic sorter
 			override_file_sorter = true,     -- override the file sorter
 			case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
-							 -- the default case_mode is "smart_case"
-		}
+			-- the default case_mode is "smart_case"
+		},
+		live_grep_args = {
+			auto_quoting = true, -- enable/disable auto-quoting
+			-- define mappings, e.g.
+			mappings = { -- extend mappings
+			i = {
+				["<C-k>"] = lga_actions.quote_prompt(),
+				["<C-i>"] = lga_actions.quote_prompt({ postfix = " --iglob " }),
+			},
+		},
+		-- ... also accepts theme settings, for example:
+		-- theme = "dropdown", -- use dropdown theme
+		-- theme = { }, -- use own theme spec
+		-- layout_config = { mirror=true }, -- mirror preview pane
 	}
+}
 }
 require('telescope').load_extension('fzf')
 
@@ -146,6 +169,7 @@ vim.opt.expandtab = true
 vim.bo.softtabstop = 2
 vim.opt.number = true
 vim.opt.ignorecase = true
+vim.o.clipboard = "unnamedplus"
 
 -- スペースキーを <leader> に設定する
 vim.api.nvim_set_keymap('n', '<Space>', '<Nop>', {noremap = true, silent = true})
@@ -158,7 +182,8 @@ vim.keymap.set('n', '<leader>f', builtin.find_files, {})
 vim.keymap.set('n', '<leader>g', builtin.git_files, {})
 vim.keymap.set('n', '<leader>b', builtin.buffers, {})
 vim.keymap.set('n', '<leader>h', builtin.help_tags, {})
-vim.keymap.set('n', '<leader>l', builtin.live_grep, {})
+-- vim.keymap.set('n', '<leader>l', builtin.live_grep, {})
+vim.keymap.set("n", "<leader>l", ":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>")
 
 vim.api.nvim_set_keymap('n', '<F3>', ':NvimTreeToggle<CR>', {noremap = true, silent = true})
 
